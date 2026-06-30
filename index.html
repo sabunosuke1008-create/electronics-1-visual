@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="エレクトロニクスⅠの用語を図解とアニメーションで直感的に学べる視覚学習サイト" />
+<title>エレクトロニクスⅠ ビジュアル用語事典</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <h1 class="site-title">⚡ エレクトロニクスⅠ <span>ビジュアル用語事典</span></h1>
+    <div class="header-controls">
+      <input type="search" id="search" placeholder="🔍 用語を検索（例：電流、磁束）" aria-label="用語検索" />
+      <button id="theme-toggle" aria-label="ダークモード切替">🌓</button>
+    </div>
+  </div>
+  <nav class="category-nav" id="category-nav" aria-label="カテゴリ"></nav>
+</header>
+
+<main class="layout">
+  <aside class="sidebar" id="sidebar" aria-label="用語一覧">
+    <div class="sidebar-head">
+      <span id="result-count">読み込み中…</span>
+      <button id="show-compare" class="compare-btn">📊 比較表</button>
+    </div>
+    <ul class="term-list" id="term-list"></ul>
+  </aside>
+
+  <section class="detail" id="detail" aria-live="polite">
+    <div class="empty-state">
+      <div class="empty-icon">⚡</div>
+      <p>左の一覧から用語を選ぶと、図解と説明が表示されます。</p>
+      <p class="hint">スマホでは下にスクロールしてください。</p>
+    </div>
+  </section>
+</main>
+
+<dialog id="compare-dialog" class="compare-dialog">
+  <button class="dialog-close" id="compare-close" aria-label="閉じる">✕</button>
+  <div id="compare-content"></div>
+</dialog>
+
+<footer class="site-footer">
+  <p>📚 図はすべてSVGで描画 / 🎨 アニメーションはCSS / 📱 モバイル＆PC対応</p>
+  <p class="small">学習用教材 — 公式の定義と異なる場合があります。教科書と合わせてご利用ください。</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
