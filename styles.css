@@ -1006,3 +1006,113 @@ button:focus-visible, a:focus-visible, .term-list li:focus-visible {
 .term-list li.viewed:hover {
   opacity: 1;
 }
+/* ===== Print Styles ===== */
+@media print {
+  /* Hide interactive elements */
+  .site-header,
+  .category-nav,
+  .sidebar,
+  .term-nav,
+  .bookmark-btn,
+  .shortcuts-hint,
+  .progress-container,
+  .bookmarks-panel,
+  .site-footer,
+  button {
+    display: none !important;
+  }
+  
+  /* Reset layout for print */
+  .layout {
+    display: block;
+    max-width: 100%;
+    padding: 0;
+  }
+  
+  .detail {
+    border: none;
+    box-shadow: none;
+    padding: 20mm;
+    background: white;
+  }
+  
+  /* Optimize typography */
+  body {
+    background: white;
+    color: black;
+    font-size: 12pt;
+    line-height: 1.6;
+  }
+  
+  .term-card .term-name {
+    font-size: 24pt;
+    color: black;
+    -webkit-text-fill-color: black;
+    background: none;
+  }
+  
+  .term-card .term-no-badge {
+    background: #333;
+    color: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Ensure SVG prints correctly */
+  .svg-box {
+    border: 1px solid #ccc;
+    background: white;
+    page-break-inside: avoid;
+  }
+  
+  .svg-box svg {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Avoid breaks */
+  .section {
+    page-break-inside: avoid;
+  }
+  
+  .term-card .one-liner {
+    border: 2px solid #2563eb;
+    background: #eff6ff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    page-break-inside: avoid;
+  }
+  
+  .mistakes {
+    border: 2px solid #f59e0b;
+    background: #fef3c7;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    page-break-inside: avoid;
+  }
+  
+  .formula {
+    border: 1px solid #94a3b8;
+    background: #f8fafc;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    page-break-inside: avoid;
+  }
+  
+  /* Links */
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+  
+  /* Page breaks */
+  .term-card {
+    page-break-after: always;
+  }
+  
+  /* Remove animations */
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

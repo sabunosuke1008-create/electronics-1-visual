@@ -459,6 +459,27 @@
     });
   }
 
+  // ===== Performance optimization =====
+  function optimizeImages() {
+    // Lazy load SVGs if needed in the future
+    const svgBoxes = $(".svg-box");
+    svgBoxes.forEach(box => {
+      box.style.willChange = "transform";
+    });
+  }
+
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
   // ===== Boot =====
   document.addEventListener("DOMContentLoaded", () => {
     if (typeof terms === "undefined" || typeof categories === "undefined") {
@@ -490,3 +511,4 @@
     });
   });
 })();
+

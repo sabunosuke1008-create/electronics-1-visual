@@ -3,7 +3,32 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="エレクトロニクスⅠの用語を図解とアニメーションで直感的に学べる視覚学習サイト" />
+<meta name="description" content="エレクトロニクスⅠの用語を図解とアニメーションで直感的に学べる視覚学習サイト。49用語を完全図解、SVGアニメーション、学習進捗管理機能付き。" />
+<meta name="keywords" content="エレクトロニクス,電気,電子工学,学習,図解,アニメーション,用語集,初心者" />
+<meta name="author" content="Electronics Visual Learning" />
+
+<!-- OGP / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sabunosuke1008-create.github.io/electronics-1-visual/" />
+<meta property="og:title" content="⚡ エレクトロニクスⅠ ビジュアル用語事典" />
+<meta property="og:description" content="図解とアニメーションで直感的に学ぶ、電気・電子工学の基礎用語49語。お気に入り機能と学習進捗管理で効率的に学習。" />
+<meta property="og:image" content="https://sabunosuke1008-create.github.io/electronics-1-visual/ogp-image.png" />
+<meta property="og:locale" content="ja_JP" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content="https://sabunosuke1008-create.github.io/electronics-1-visual/" />
+<meta name="twitter:title" content="⚡ エレクトロニクスⅠ ビジュアル用語事典" />
+<meta name="twitter:description" content="図解とアニメーションで直感的に学ぶ、電気・電子工学の基礎用語49語" />
+<meta name="twitter:image" content="https://sabunosuke1008-create.github.io/electronics-1-visual/ogp-image.png" />
+
+<!-- Theme Color -->
+<meta name="theme-color" content="#2563eb" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1a2038" media="(prefers-color-scheme: dark)" />
+
+<!-- Apple Touch Icon -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+
 <title>エレクトロニクスⅠ ビジュアル用語事典</title>
 <link rel="stylesheet" href="styles.css" />
 </head>
@@ -13,7 +38,7 @@
     <h1 class="site-title">⚡ エレクトロニクスⅠ <span>ビジュアル用語事典</span></h1>
     <div class="header-controls">
       <input type="search" id="search" placeholder="用語を検索..." aria-label="用語検索" />
-      <button id="theme-toggle" aria-label="ダークモード切替">🌓</button>
+      <button id="theme-toggle" aria-label="ダークモード切替" title="テーマ切替">🌓</button>
       <button id="toggle-bookmarks" class="toggle-bookmarks" aria-label="お気に入り" title="お気に入り">
         ⭐
         <span id="bookmark-count" class="bookmark-count" style="display:none">0</span>
@@ -58,7 +83,7 @@
 <aside class="bookmarks-panel" id="bookmarks-panel">
   <div class="bookmarks-header">
     <h3>⭐ お気に入り</h3>
-    <button class="bookmarks-close" id="bookmarks-close">✕</button>
+    <button class="bookmarks-close" id="bookmarks-close" aria-label="閉じる">✕</button>
   </div>
   <ul class="bookmarks-list" id="bookmarks-list">
     <li class="bookmarks-empty">お気に入りがありません</li>
@@ -71,6 +96,7 @@
   <div><kbd>/</kbd> または <kbd>Ctrl</kbd>+<kbd>K</kbd> 検索</div>
   <div><kbd>Esc</kbd> 検索解除</div>
   <div><kbd>B</kbd> お気に入りに追加/削除</div>
+  <div><kbd>?</kbd> このヘルプを表示</div>
 </div>
 
 <dialog id="compare-dialog" class="compare-dialog">
