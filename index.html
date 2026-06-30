@@ -14,6 +14,10 @@
     <div class="header-controls">
       <input type="search" id="search" placeholder="用語を検索..." aria-label="用語検索" />
       <button id="theme-toggle" aria-label="ダークモード切替">🌓</button>
+      <button id="toggle-bookmarks" class="toggle-bookmarks" aria-label="お気に入り" title="お気に入り">
+        ⭐
+        <span id="bookmark-count" class="bookmark-count" style="display:none">0</span>
+      </button>
       <button id="shortcuts-help" aria-label="キーボードショートカット" title="ショートカット">⌨️</button>
     </div>
   </div>
@@ -38,11 +42,35 @@
   </section>
 </main>
 
+<div class="progress-container" id="progress-container">
+  <div class="progress-header">
+    <span>📚 学習進捗</span>
+    <span id="progress-percent">0%</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <div class="progress-stats">
+    <span id="progress-stats">0 / 49 用語</span>
+  </div>
+</div>
+
+<aside class="bookmarks-panel" id="bookmarks-panel">
+  <div class="bookmarks-header">
+    <h3>⭐ お気に入り</h3>
+    <button class="bookmarks-close" id="bookmarks-close">✕</button>
+  </div>
+  <ul class="bookmarks-list" id="bookmarks-list">
+    <li class="bookmarks-empty">お気に入りがありません</li>
+  </ul>
+</aside>
+
 <div class="shortcuts-hint" id="shortcuts-hint">
   <div style="font-weight:700;margin-bottom:8px">⌨️ キーボードショートカット</div>
   <div><kbd>←</kbd> <kbd>→</kbd> 前後の用語へ移動</div>
   <div><kbd>/</kbd> または <kbd>Ctrl</kbd>+<kbd>K</kbd> 検索</div>
   <div><kbd>Esc</kbd> 検索解除</div>
+  <div><kbd>B</kbd> お気に入りに追加/削除</div>
 </div>
 
 <dialog id="compare-dialog" class="compare-dialog">

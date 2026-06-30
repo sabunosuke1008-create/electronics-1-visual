@@ -8,7 +8,124 @@
     category: "all",
     query: "",
     currentId: null,
+    viewedTerms: new Set(),
+    bookmarks: new Set(),
   };
+
+  // ===== LocalStorage =====
+  function loadState() {
+    try {
+      const viewed = localStorage.getItem("viewedTerms");
+      if (viewed) state.viewedTerms = new Set(JSON.parse(viewed));
+      const bookmarks = localStorage.getItem("bookmarks");
+      if (bookmarks) state.bookmarks = new Set(JSON.parse(bookmarks));
+    } catch (e) {}
+  }
+
+  function saveViewed() {
+    localStorage.setItem("viewedTerms", JSON.stringify([...state.viewedTerms]));
+  }
+
+  function saveBookmarks() {
+    localStorage.setItem("bookmarks", JSON.stringify([...state.bookmarks]));
+  }
+
+  // ===== Progress =====
+  function updateProgress() {
+    const total = terms.length;
+    const viewed = state.viewedTerms.size;
+    const percent = Math.round((viewed / total) * 100);
+    
+    $("#progress-percent").textContent = `${percent}%`;
+    $("#progress-fill").style.width = `${percent}%`;
+    $("#progress-stats").textContent = `${viewed} / ${total} 用語`;
+    
+    if (viewed > 0) {
+      $("#progress-container").classList.remove("hidden");
+    }
+  }
+
+  // ===== Bookmarks =====
+  function updateBookmarks() {
+    const count = state.bookmarks.size;
+    const badge = $("#bookmark-count");
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = "flex";
+    } else {
+      badge.style.display = "none";
+    }
+    
+    renderBookmarksList();
+  }
+
+  function renderBookmarksList() {
+    const list = $("#bookmarks-list");
+    if (state.bookmarks.size === 0) {
+      list.innerHTML = '<li class="bookmarks-empty">お気に入りがありません</li>';
+      return;
+    }
+    
+    const bookmarkedTerms = terms.filter(t => state.bookmarks.has(t.id));
+    list.innerHTML = bookmarkedTerms
+      .map(t => `
+        <li class="bookmark-item" data-id="${t.id}">
+          <span class="bookmark-item-name">${t.name}</span>
+          <button class="bookmark-remove" data-id="${t.id}" title="削除">🗑️</button>
+        </li>
+      `)
+      .join("");
+    
+    list.addEventListener("click", (e) => {
+      const item = e.target.closest(".bookmark-item");
+      const removeBtn = e.target.closest(".bookmark-remove");
+      
+      if (removeBtn) {
+        e.stopPropagation();
+        state.bookmarks.delete(removeBtn.dataset.id);
+        saveBookmarks();
+        updateBookmarks();
+        updateBookmarkButton();
+      } else if (item) {
+        location.hash = item.dataset.id;
+        $("#bookmarks-panel").classList.remove("open");
+      }
+    });
+  }
+
+  function toggleBookmark(id) {
+    if (state.bookmarks.has(id)) {
+      state.bookmarks.delete(id);
+    } else {
+      state.bookmarks.add(id);
+    }
+    saveBookmarks();
+    updateBookmarks();
+    updateBookmarkButton();
+  }
+
+  function updateBookmarkButton() {
+    const btn = $(".bookmark-btn");
+    if (!btn) return;
+    
+    if (state.currentId && state.bookmarks.has(state.currentId)) {
+      btn.classList.add("active");
+      btn.textContent = "⭐";
+    } else {
+      btn.classList.remove("active");
+      btn.textContent = "☆";
+    }
+  }
+
+  function initBookmarks() {
+    $("#toggle-bookmarks").addEventListener("click", () => {
+      $("#bookmarks-panel").classList.toggle("open");
+    });
+    
+    $("#bookmarks-close").addEventListener("click", () => {
+      $("#bookmarks-panel").classList.remove("open");
+    });
+  }
 
   // ===== Theme =====
   function initTheme() {
@@ -81,10 +198,11 @@
     list.innerHTML = items
       .map(
         (t) => `
-        <li data-id="${t.id}" class="${t.id === state.currentId ? "active" : ""}">
+        <li data-id="${t.id}" class="${t.id === state.currentId ? "active" : ""}${state.viewedTerms.has(t.id) ? " viewed" : ""}">
           <span class="term-no">${t.no ?? ""}</span>
           <span class="cat-dot cat-${t.category}"></span>
           <span class="term-name-li">${t.name}</span>
+          ${state.viewedTerms.has(t.id) ? '<span style="margin-left:auto;color:var(--accent);font-size:10px">✓</span>' : ''}
         </li>`
       )
       .join("");
@@ -103,6 +221,15 @@
         </div>`;
       return;
     }
+    
+    // Mark as viewed
+    if (!state.viewedTerms.has(id)) {
+      state.viewedTerms.add(id);
+      saveViewed();
+      updateProgress();
+      renderList();
+    }
+    
     state.currentId = id;
     $$("#term-list li").forEach((li) => li.classList.toggle("active", li.dataset.id === id));
 
@@ -157,6 +284,7 @@
 
     detail.innerHTML = `
       ${navHTML}
+      <button class="bookmark-btn" id="bookmark-btn" title="お気に入りに追加">☆</button>
       <article class="term-card">
         <header class="term-header">
           <span class="term-no-badge">No.${term.no ?? "-"}</span>
@@ -193,6 +321,15 @@
         location.hash = btn.dataset.id;
       });
     });
+
+    // Bookmark button
+    const bookmarkBtn = $("#bookmark-btn");
+    if (bookmarkBtn) {
+      updateBookmarkButton();
+      bookmarkBtn.addEventListener("click", () => {
+        toggleBookmark(id);
+      });
+    }
 
     $$(".related-item").forEach((el) => {
       el.addEventListener("click", () => {
@@ -286,6 +423,12 @@
         $("#search").focus();
       } else if (e.key === "Escape") {
         $("#search").blur();
+        $("#bookmarks-panel").classList.remove("open");
+      } else if (e.key === "b" || e.key === "B") {
+        if (state.currentId) {
+          e.preventDefault();
+          toggleBookmark(state.currentId);
+        }
       }
     });
   }
@@ -322,14 +465,20 @@
       $("#detail").innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>データの読み込みに失敗しました。</p></div>`;
       return;
     }
+    
+    loadState();
     initTheme();
     initHeaderShrink();
+    initBookmarks();
     renderCategories();
     renderList();
     initSearch();
     initCompare();
     initKeyboard();
     initShortcutsHint();
+    updateProgress();
+    updateBookmarks();
+    
     window.addEventListener("hashchange", handleHash);
     handleHash();
 
@@ -341,4 +490,3 @@
     });
   });
 })();
-
