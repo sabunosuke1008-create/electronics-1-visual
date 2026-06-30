@@ -12,8 +12,9 @@
   <div class="header-inner">
     <h1 class="site-title">⚡ エレクトロニクスⅠ <span>ビジュアル用語事典</span></h1>
     <div class="header-controls">
-      <input type="search" id="search" placeholder="🔍 用語を検索（例：電流、磁束）" aria-label="用語検索" />
+      <input type="search" id="search" placeholder="用語を検索..." aria-label="用語検索" />
       <button id="theme-toggle" aria-label="ダークモード切替">🌓</button>
+      <button id="shortcuts-help" aria-label="キーボードショートカット" title="ショートカット">⌨️</button>
     </div>
   </div>
   <nav class="category-nav" id="category-nav" aria-label="カテゴリ"></nav>
@@ -36,6 +37,13 @@
     </div>
   </section>
 </main>
+
+<div class="shortcuts-hint" id="shortcuts-hint">
+  <div style="font-weight:700;margin-bottom:8px">⌨️ キーボードショートカット</div>
+  <div><kbd>←</kbd> <kbd>→</kbd> 前後の用語へ移動</div>
+  <div><kbd>/</kbd> または <kbd>Ctrl</kbd>+<kbd>K</kbd> 検索</div>
+  <div><kbd>Esc</kbd> 検索解除</div>
+</div>
 
 <dialog id="compare-dialog" class="compare-dialog">
   <button class="dialog-close" id="compare-close" aria-label="閉じる">✕</button>

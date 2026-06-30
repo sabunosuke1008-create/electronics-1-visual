@@ -26,6 +26,21 @@
     });
   }
 
+  // ===== Scroll header shrink =====
+  let lastScroll = 0;
+  function initHeaderShrink() {
+    const header = $(".site-header");
+    window.addEventListener("scroll", () => {
+      const currentScroll = window.pageYOffset;
+      if (currentScroll > 100) {
+        header.classList.add("scrolled");
+      } else {
+        header.classList.remove("scrolled");
+      }
+      lastScroll = currentScroll;
+    }, { passive: true });
+  }
+
   // ===== Categories =====
   function renderCategories() {
     const nav = $("#category-nav");
@@ -73,18 +88,9 @@
         </li>`
       )
       .join("");
-    list.addEventListener(
-      "click",
-      (e) => {
-        const li = e.target.closest("li[data-id]");
-        if (!li) return;
-        location.hash = li.dataset.id;
-      },
-      { once: true }
-    );
   }
 
-  // ===== Detail =====
+  // ===== Detail with navigation =====
   function renderDetail(id) {
     const term = terms.find((t) => t.id === id);
     const detail = $("#detail");
@@ -101,6 +107,19 @@
     $$("#term-list li").forEach((li) => li.classList.toggle("active", li.dataset.id === id));
 
     const catLabel = (categories.find((c) => c.id === term.category) || {}).name || "";
+
+    // Find prev/next in current filtered list
+    const filtered = filteredTerms();
+    const currentIndex = filtered.findIndex(t => t.id === id);
+    const prevTerm = currentIndex > 0 ? filtered[currentIndex - 1] : null;
+    const nextTerm = currentIndex < filtered.length - 1 ? filtered[currentIndex + 1] : null;
+
+    const navHTML = `
+      <div class="term-nav">
+        ${prevTerm ? `<button class="term-nav-btn term-nav-prev" data-id="${prevTerm.id}">← ${prevTerm.name}</button>` : '<span></span>'}
+        ${nextTerm ? `<button class="term-nav-btn term-nav-next" data-id="${nextTerm.id}">${nextTerm.name} →</button>` : '<span></span>'}
+      </div>
+    `;
 
     const formulaHTML = term.formula
       ? `<div class="section">
@@ -137,6 +156,7 @@
         : "";
 
     detail.innerHTML = `
+      ${navHTML}
       <article class="term-card">
         <header class="term-header">
           <span class="term-no-badge">No.${term.no ?? "-"}</span>
@@ -164,7 +184,15 @@
         ${mistakesHTML}
         ${relatedHTML}
       </article>
+      ${navHTML}
     `;
+
+    // Nav button handlers
+    $$(".term-nav-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        location.hash = btn.dataset.id;
+      });
+    });
 
     $$(".related-item").forEach((el) => {
       el.addEventListener("click", () => {
@@ -239,6 +267,55 @@
     });
   }
 
+  // ===== Keyboard navigation =====
+  function initKeyboard() {
+    document.addEventListener("keydown", (e) => {
+      if (e.target.matches("input, textarea")) return;
+      
+      const filtered = filteredTerms();
+      const currentIndex = filtered.findIndex(t => t.id === state.currentId);
+      
+      if (e.key === "ArrowLeft" && currentIndex > 0) {
+        e.preventDefault();
+        location.hash = filtered[currentIndex - 1].id;
+      } else if (e.key === "ArrowRight" && currentIndex < filtered.length - 1) {
+        e.preventDefault();
+        location.hash = filtered[currentIndex + 1].id;
+      } else if (e.key === "/" || (e.key === "k" && (e.metaKey || e.ctrlKey))) {
+        e.preventDefault();
+        $("#search").focus();
+      } else if (e.key === "Escape") {
+        $("#search").blur();
+      }
+    });
+  }
+
+  // ===== Shortcuts hint =====
+  function initShortcutsHint() {
+    const hint = $("#shortcuts-hint");
+    const btn = $("#shortcuts-help");
+    let hintTimeout;
+    
+    btn.addEventListener("click", () => {
+      hint.classList.add("show");
+      clearTimeout(hintTimeout);
+      hintTimeout = setTimeout(() => {
+        hint.classList.remove("show");
+      }, 5000);
+    });
+    
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "?" && !e.target.matches("input, textarea")) {
+        e.preventDefault();
+        hint.classList.add("show");
+        clearTimeout(hintTimeout);
+        hintTimeout = setTimeout(() => {
+          hint.classList.remove("show");
+        }, 5000);
+      }
+    });
+  }
+
   // ===== Boot =====
   document.addEventListener("DOMContentLoaded", () => {
     if (typeof terms === "undefined" || typeof categories === "undefined") {
@@ -246,14 +323,17 @@
       return;
     }
     initTheme();
+    initHeaderShrink();
     renderCategories();
     renderList();
     initSearch();
     initCompare();
+    initKeyboard();
+    initShortcutsHint();
     window.addEventListener("hashchange", handleHash);
     handleHash();
 
-    // Delegated click for list (because innerHTML replaces nodes)
+    // Delegated click for list
     $("#term-list").addEventListener("click", (e) => {
       const li = e.target.closest("li[data-id]");
       if (!li) return;
@@ -261,3 +341,4 @@
     });
   });
 })();
+
